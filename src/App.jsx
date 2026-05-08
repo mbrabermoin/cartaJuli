@@ -2,7 +2,7 @@ import { useState } from 'react'
 import './App.css'
 
 const photoModules = import.meta.glob(
-  './assets/WhatsApp Image 2026-05-08 at 19.23*.jpeg',
+  './assets/WhatsApp Image 2026-05-08*.jpeg',
   { eager: true, import: 'default' },
 )
 
