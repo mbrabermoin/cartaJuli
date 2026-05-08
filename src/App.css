@@ -13,6 +13,10 @@
   z-index: 2;
 }
 
+.photo-cloud-mobile {
+  display: none;
+}
+
 .memory-frame {
   position: absolute;
   width: clamp(78px, 10vw, 132px);
@@ -307,52 +311,63 @@
   }
 
   .photo-cloud {
+    display: none;
+  }
+
+  .photo-cloud-mobile {
+    display: block;
     position: relative;
-    inset: auto;
-    z-index: 1;
+    z-index: 4;
+    overflow: hidden;
+    padding: 2px 6px 10px;
+    mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  }
+
+  .photo-track {
+    display: flex;
+    width: max-content;
+    animation: mobile-marquee 36s linear infinite;
+  }
+
+  .photo-group {
     display: flex;
     gap: 10px;
-    padding: 2px 6px 10px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x proximity;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(161, 53, 63, 0.35) transparent;
+    padding-right: 10px;
   }
 
-  .photo-cloud::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  .photo-cloud::-webkit-scrollbar-thumb {
-    background: rgba(161, 53, 63, 0.35);
-    border-radius: 999px;
-  }
-
-  .memory-frame {
+  .memory-frame-mobile {
     position: relative;
     width: clamp(86px, 26vw, 108px);
     min-width: clamp(86px, 26vw, 108px);
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-    transform: rotate(var(--rotation));
+    margin: 0;
     padding: 4px 4px 12px;
-    animation: none;
-    scroll-snap-align: center;
+    border-radius: 6px;
+    border: 1px solid rgba(165, 110, 80, 0.32);
+    background: linear-gradient(180deg, #fffef9 0%, #fff9f2 100%);
+    box-shadow:
+      0 12px 20px rgba(110, 54, 36, 0.2),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.72);
   }
 
-  .memory-frame:nth-child(3n + 1) {
+  .memory-frame-mobile:nth-child(3n + 1) {
     transform: rotate(-6deg);
   }
 
-  .memory-frame:nth-child(3n + 2) {
+  .memory-frame-mobile:nth-child(3n + 2) {
     transform: rotate(4deg);
   }
 
-  .memory-frame:nth-child(3n + 3) {
+  .memory-frame-mobile:nth-child(3n + 3) {
     transform: rotate(-2deg);
+  }
+
+  .memory-frame-mobile img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 3px;
+    display: block;
+    filter: saturate(0.96) contrast(1.02);
   }
 
   .letter-card {
@@ -366,6 +381,15 @@
 
   .wax-seal {
     opacity: 0.92;
+  }
+}
+
+@keyframes mobile-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
   }
 }
 

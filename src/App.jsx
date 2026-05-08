@@ -1,25 +1,15 @@
-import { useEffect, useRef } from 'react'
 import './App.css'
 
-const photoPaths = [
-  './assets/WhatsApp Image 2026-05-08 at 19.23.21.jpeg',
-  './assets/WhatsApp Image 2026-05-08 at 19.23.21 (1).jpeg',
-  './assets/WhatsApp Image 2026-05-08 at 19.23.21 (2).jpeg',
-  './assets/WhatsApp Image 2026-05-08 at 19.23.21 (3).jpeg',
-  './assets/WhatsApp Image 2026-05-08 at 19.23.21 (4).jpeg',
-  './assets/WhatsApp Image 2026-05-08 at 19.23.21 (5).jpeg',
-  './assets/WhatsApp Image 2026-05-08 at 19.23.22.jpeg',
-  './assets/WhatsApp Image 2026-05-08 at 19.23.22 (1).jpeg',
-  './assets/WhatsApp Image 2026-05-08 at 19.23.22 (2).jpeg',
-  './assets/WhatsApp Image 2026-05-08 at 19.23.22 (3).jpeg',
-  './assets/WhatsApp Image 2026-05-08 at 19.23.22 (4).jpeg',
-  './assets/WhatsApp Image 2026-05-08 at 19.23.22 (5).jpeg',
-  './assets/WhatsApp Image 2026-05-08 at 19.23.22 (6).jpeg',
-  './assets/WhatsApp Image 2026-05-08 at 19.23.22 (7).jpeg',
-  './assets/WhatsApp Image 2026-05-08 at 19.23.22 (8).jpeg',
-]
+const photoModules = import.meta.glob(
+  './assets/WhatsApp Image 2026-05-08 at 19.23*.jpeg',
+  { eager: true, import: 'default' },
+)
 
-const photos = photoPaths.map((path) => new URL(path, import.meta.url).href)
+const photos = Object.entries(photoModules)
+  .sort(([leftPath], [rightPath]) =>
+    leftPath.localeCompare(rightPath, undefined, { numeric: true }),
+  )
+  .map(([, src]) => src)
 
 const framePositions = photos.map((src, index) => {
   const side = index % 2 === 0 ? 'left' : 'right'
@@ -38,81 +28,11 @@ const framePositions = photos.map((src, index) => {
   }
 })
 
-const carouselFrames = [...framePositions, ...framePositions]
-
 function App() {
-  const carouselRef = useRef(null)
-
-  useEffect(() => {
-    const container = carouselRef.current
-
-    if (!container) {
-      return undefined
-    }
-
-    let animationId = 0
-    let lastTimestamp = 0
-    let isPaused = false
-
-    const speed = 22
-    const edgeOffset = 2
-
-    const pause = () => {
-      isPaused = true
-    }
-
-    const resume = () => {
-      isPaused = false
-      lastTimestamp = 0
-    }
-
-    const animate = (timestamp) => {
-      if (!lastTimestamp) {
-        lastTimestamp = timestamp
-      }
-
-      const delta = timestamp - lastTimestamp
-      lastTimestamp = timestamp
-
-      if (!isPaused) {
-        const loopWidth = container.scrollWidth / 2
-
-        if (loopWidth > container.clientWidth) {
-          const nextPosition = container.scrollLeft + (speed * delta) / 1000
-
-          if (nextPosition >= loopWidth - edgeOffset) {
-            container.scrollLeft = nextPosition - loopWidth
-          } else {
-            container.scrollLeft = nextPosition
-          }
-        }
-      }
-
-      animationId = requestAnimationFrame(animate)
-    }
-
-    container.addEventListener('pointerdown', pause)
-    container.addEventListener('pointerup', resume)
-    container.addEventListener('pointercancel', resume)
-    container.addEventListener('touchstart', pause, { passive: true })
-    container.addEventListener('touchend', resume)
-
-    animationId = requestAnimationFrame(animate)
-
-    return () => {
-      cancelAnimationFrame(animationId)
-      container.removeEventListener('pointerdown', pause)
-      container.removeEventListener('pointerup', resume)
-      container.removeEventListener('pointercancel', resume)
-      container.removeEventListener('touchstart', pause)
-      container.removeEventListener('touchend', resume)
-    }
-  }, [])
-
   return (
     <main className="letter-page">
-      <aside ref={carouselRef} className="photo-cloud" aria-hidden="true">
-        {carouselFrames.map((frame, index) => (
+      <aside className="photo-cloud" aria-hidden="true">
+        {framePositions.map((frame, index) => (
           <figure
             key={`${frame.src}-${index}`}
             className={`memory-frame ${frame.side === 'left' ? 'memory-left' : 'memory-right'}`}
@@ -126,6 +46,20 @@ function App() {
             <img src={frame.src} alt="" loading="lazy" decoding="async" />
           </figure>
         ))}
+      </aside>
+
+      <aside className="photo-cloud-mobile" aria-hidden="true">
+        <div className="photo-track">
+          {[0, 1].map((copy) => (
+            <div className="photo-group" key={copy}>
+              {photos.map((src, index) => (
+                <figure key={`${src}-${copy}-${index}`} className="memory-frame-mobile">
+                  <img src={src} alt="" loading="lazy" decoding="async" />
+                </figure>
+              ))}
+            </div>
+          ))}
+        </div>
       </aside>
 
       <div className="heart-field" aria-hidden="true">
