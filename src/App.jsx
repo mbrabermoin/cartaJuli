@@ -46,7 +46,7 @@ function App() {
           <span className="envelope-flap" aria-hidden="true"></span>
           <span className="envelope-front" aria-hidden="true"></span>
           <span className="envelope-seal" aria-hidden="true">❤</span>
-          <span className="envelope-instruction">Para Juli, toca para abrir!</span>
+          <span className="envelope-instruction">Para Juli, tocá para abrir!</span>
         </button>
       </div>
 
