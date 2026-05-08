@@ -495,7 +495,7 @@
   .photo-track {
     display: flex;
     width: max-content;
-    animation: mobile-marquee 36s linear infinite;
+    animation: mobile-marquee 15s linear infinite;
   }
 
   .photo-group {
