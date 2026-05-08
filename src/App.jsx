@@ -1,8 +1,133 @@
+import { useEffect, useRef } from 'react'
 import './App.css'
 
+const photoPaths = [
+  './assets/WhatsApp Image 2026-05-08 at 19.23.21.jpeg',
+  './assets/WhatsApp Image 2026-05-08 at 19.23.21 (1).jpeg',
+  './assets/WhatsApp Image 2026-05-08 at 19.23.21 (2).jpeg',
+  './assets/WhatsApp Image 2026-05-08 at 19.23.21 (3).jpeg',
+  './assets/WhatsApp Image 2026-05-08 at 19.23.21 (4).jpeg',
+  './assets/WhatsApp Image 2026-05-08 at 19.23.21 (5).jpeg',
+  './assets/WhatsApp Image 2026-05-08 at 19.23.22.jpeg',
+  './assets/WhatsApp Image 2026-05-08 at 19.23.22 (1).jpeg',
+  './assets/WhatsApp Image 2026-05-08 at 19.23.22 (2).jpeg',
+  './assets/WhatsApp Image 2026-05-08 at 19.23.22 (3).jpeg',
+  './assets/WhatsApp Image 2026-05-08 at 19.23.22 (4).jpeg',
+  './assets/WhatsApp Image 2026-05-08 at 19.23.22 (5).jpeg',
+  './assets/WhatsApp Image 2026-05-08 at 19.23.22 (6).jpeg',
+  './assets/WhatsApp Image 2026-05-08 at 19.23.22 (7).jpeg',
+  './assets/WhatsApp Image 2026-05-08 at 19.23.22 (8).jpeg',
+]
+
+const photos = photoPaths.map((path) => new URL(path, import.meta.url).href)
+
+const framePositions = photos.map((src, index) => {
+  const side = index % 2 === 0 ? 'left' : 'right'
+  const vertical = 8 + ((index * 13) % 76)
+  const distance = 2 + ((index * 7) % 9)
+  const rotation = -12 + ((index * 17) % 25)
+  const depth = 1 + (index % 4)
+
+  return {
+    src,
+    side,
+    vertical,
+    distance,
+    rotation,
+    depth,
+  }
+})
+
+const carouselFrames = [...framePositions, ...framePositions]
+
 function App() {
+  const carouselRef = useRef(null)
+
+  useEffect(() => {
+    const container = carouselRef.current
+
+    if (!container) {
+      return undefined
+    }
+
+    let animationId = 0
+    let lastTimestamp = 0
+    let isPaused = false
+
+    const speed = 22
+    const edgeOffset = 2
+
+    const pause = () => {
+      isPaused = true
+    }
+
+    const resume = () => {
+      isPaused = false
+      lastTimestamp = 0
+    }
+
+    const animate = (timestamp) => {
+      if (!lastTimestamp) {
+        lastTimestamp = timestamp
+      }
+
+      const delta = timestamp - lastTimestamp
+      lastTimestamp = timestamp
+
+      if (!isPaused) {
+        const loopWidth = container.scrollWidth / 2
+
+        if (loopWidth > container.clientWidth) {
+          const nextPosition = container.scrollLeft + (speed * delta) / 1000
+
+          if (nextPosition >= loopWidth - edgeOffset) {
+            container.scrollLeft = nextPosition - loopWidth
+          } else {
+            container.scrollLeft = nextPosition
+          }
+        }
+      }
+
+      animationId = requestAnimationFrame(animate)
+    }
+
+    container.addEventListener('pointerdown', pause)
+    container.addEventListener('pointerup', resume)
+    container.addEventListener('pointercancel', resume)
+    container.addEventListener('touchstart', pause, { passive: true })
+    container.addEventListener('touchend', resume)
+
+    animationId = requestAnimationFrame(animate)
+
+    return () => {
+      cancelAnimationFrame(animationId)
+      container.removeEventListener('pointerdown', pause)
+      container.removeEventListener('pointerup', resume)
+      container.removeEventListener('pointercancel', resume)
+      container.removeEventListener('touchstart', pause)
+      container.removeEventListener('touchend', resume)
+    }
+  }, [])
+
   return (
     <main className="letter-page">
+      <aside ref={carouselRef} className="photo-cloud" aria-hidden="true">
+        {carouselFrames.map((frame, index) => (
+          <figure
+            key={`${frame.src}-${index}`}
+            className={`memory-frame ${frame.side === 'left' ? 'memory-left' : 'memory-right'}`}
+            style={{
+              top: `${frame.vertical}%`,
+              [frame.side]: `${frame.distance}%`,
+              '--rotation': `${frame.rotation}deg`,
+              zIndex: frame.depth,
+            }}
+          >
+            <img src={frame.src} alt="" loading="lazy" decoding="async" />
+          </figure>
+        ))}
+      </aside>
+
       <div className="heart-field" aria-hidden="true">
         <span className="heart heart-1">❤</span>
         <span className="heart heart-2">❤</span>
