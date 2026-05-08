@@ -164,9 +164,8 @@ function App() {
             mi vida, mi todo. 
             Gracias por elegirme, por bancarme, por ayudarme a crecer, por hacerme feliz,
             por hacerme sentir amado, por hacerme sentir que soy el hombre más afortunado del
-            mundo. Gracias por ser vos, por ser tan increíble, por ser tan hermosa,
-             por ser tan dulce, tan inteligente, tan fuerte,
-            tan buena persona. Gracias por ser la mujer de mi vida.
+            mundo. Gracias por ser vos, por volverme loco todo el tiempo.
+            Gracias por ser la mujer de mi vida.
           </p>
 
             <p className="letter-signature">¡Feliz cumpleaños mi amor, te amo!</p>
