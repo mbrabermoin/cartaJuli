@@ -169,6 +169,7 @@ function App() {
           </p>
 
             <p className="letter-signature">¡Feliz cumpleaños mi amor, te amo!</p>
+            <p>P.D.: Reservate el martes 19 para tu regalo!</p>
           </section>
 
           <div className="wax-seal" aria-hidden="true">❤</div>
